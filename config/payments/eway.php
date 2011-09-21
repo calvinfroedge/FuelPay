@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_cid'] = "87654321";
 //Note: you can sign into the test interface at test.authorize.net

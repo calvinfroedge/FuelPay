@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_mid'] = "237380000";
 $config['api_username'] = "testuser";

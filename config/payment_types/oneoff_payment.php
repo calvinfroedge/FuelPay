@@ -1,6 +1,7 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-$config['oneoff_payment'] = array(
+return array(
+	'oneoff_payment' => array(
 			'ip_address'		=>	'',	//IP address of purchaser
 			'cc_type'			=>	'',	//Visa, MasterCard, Discover, Amex
 			'cc_number'			=>	'', //Credit card number
@@ -44,6 +45,5 @@ $config['oneoff_payment'] = array(
 			'shipping_amt'		=>	'',
 			'duty_amt'			=>	'',
 			'tax_exempt'		=>	''
+	)
 );
-
-return $config;

@@ -1,4 +1,6 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+namespace Payments;
 
 class Authorize_Net
 {		
@@ -35,12 +37,12 @@ class Authorize_Net
 	/**
 	 * The API method currently being utilized
 	*/
-	protected $_api_endpoint;	
+	private static $_api_endpoint;	
 
 	/**
 	 * An array for storing all settings
 	*/	
-	private static $_settings = array();
+	private static $_api_settings = array();
 
 	/**
 	 * An array for storing all request data
@@ -50,7 +52,7 @@ class Authorize_Net
 	/**
 	 * The final string to be sent in the http query
 	*/	
-	protected $_http_query;	
+	private static $_http_query;	
 	
 	/**
 	 * The default params for this api
@@ -60,11 +62,10 @@ class Authorize_Net
 	/**
 	 * Constructor method
 	*/		
-	public static function __construct($payments)
-	{
-		self::$payments = $payments;				
+	public function __construct($payments)
+	{				
 		self::$_default_params = \Config::get('method_params');
-		self::$_api_endpoint = \Config::get('api_endpoint'.'_'.self::$payments::$mode);
+		self::$_api_endpoint = \Config::get('api_endpoint'.'_'.$payments::$mode);
 		self::$_delimiter = \Config::get('delimiter');		
 		self::$_api_settings = array(
 			'login'			=> \Config::get('api_username'),
@@ -76,6 +77,8 @@ class Authorize_Net
 			'test_mode'		=> \Config::get('test_mode')
 		);
 	}
+	
+	public static function test(){ return 'hello';}
 
 	/**
 	 * Builds a request
@@ -94,8 +97,8 @@ class Authorize_Net
 		
 		if(self::$_api_method == 'createTransactionRequest')
 		{		
-			$nodes['transactionRequest'] = self::s_transaction_fields($transaction_type, $params);						
-			$nodes['transactionRequest']['transactionSettings'] = self::$_transaction_settings();		
+			$nodes['transactionRequest'] = self::_transaction_fields($transaction_type, $params);						
+			$nodes['transactionRequest']['transactionSettings'] = self::_transaction_settings();		
 		}
 
 		if(self::$_api_method == 'getTransactionDetailsRequest')
@@ -113,7 +116,7 @@ class Authorize_Net
 			$nodes['subscription'] = self::_transaction_fields($transaction_type, $params);
 		}			
 								
-		$request = self::$payments::build_xml_request(
+		$request = \Payments::build_xml_request(
 			self::$_api_settings['xml_version'],
 			self::$_api_settings['encoding'],
 			$nodes,					
@@ -485,7 +488,7 @@ class Authorize_Net
 	 * @param	array	An array of payment params, sent from your controller / library
 	 * @return	object	The response from the payment gateway
 	*/	
-	public static function authorize_net_oneoff_payment($params)
+	public static function oneoff_payment($params)
 	{
 		self::$_api_method = 'createTransactionRequest';
 		self::$_request = self::_build_request($params, 'authCaptureTransaction');			
@@ -497,7 +500,7 @@ class Authorize_Net
 	 * @param	array	An array of payment params, sent from your controller / library
 	 * @return	object	The response from the payment gateway
 	*/	
-	public static function authorize_net_authorize_payment($params)
+	public static function authorize_payment($params)
 	{
 		self::$_api_method = 'createTransactionRequest';
 		self::$_request = self::_build_request($params, 'authOnlyTransaction');			
@@ -509,7 +512,7 @@ class Authorize_Net
 	 * @param	array	An array of payment params, sent from your controller / library
 	 * @return	object	The response from the payment gateway
 	*/	
-	public static function authorize_net_capture_payment($params)
+	public static function capture_payment($params)
 	{
 		self::$_api_method = 'createTransactionRequest';
 		self::$_request = self::_build_request($params, 'priorAuthCaptureTransaction');			
@@ -523,7 +526,7 @@ class Authorize_Net
 	 * NOTE: This transaction type can be used to cancel either an original transaction that is not yet settled, or an entire order composed of more than one transaction.  A void prevents the transaction or order from being sent for settlement. A Void can be submitted against any other transaction type.
 	 * NOTE: This will ONLY work for unsettled transactions.
 	*/	
-	public static function authorize_net_void_payment($params)
+	public static function void_payment($params)
 	{
 		self::$_api_method = 'createTransactionRequest';
 		self::$_request = self::_build_request($params, 'voidTransaction');			
@@ -535,7 +538,7 @@ class Authorize_Net
 	 * @param	array	An array of payment params, sent from your controller / library
 	 * @return	object	The response from the payment gateway
 	*/	
-	public static function authorize_net_get_transaction_details($params)
+	public static function get_transaction_details($params)
 	{
 		self::$_api_method = 'getTransactionDetailsRequest';
 		self::$_request = self::_build_request($params);			
@@ -549,7 +552,7 @@ class Authorize_Net
 	 *
 	 * NOTE:  This submits a LINKED credit.  Authorize.net supports both linked credits and unlinked credits.  Linked credit refunds must be submitted wthin 120 days of original settlement, and must be associated with a particular transaction.  Unlinked credits allow you to submit refunds for payments not submitted through the gateway, or beyond the 120 day period.  If you want to do unlinked credits, check this out: http://www.authorize.net/files/ecc.pdf
 	*/	
-	public static function authorize_net_refund_payment($params)
+	public static function refund_payment($params)
 	{
 		self::$_api_method = 'createTransactionRequest';
 		self::$_request = self::_build_request($params, 'refundTransaction');		
@@ -563,7 +566,7 @@ class Authorize_Net
 	 * @return	object
 	 *
 	 */		
-	public static function authorize_net_recurring_payment($params)
+	public static function recurring_payment($params)
 	{
 		self::$_api_method = 'ARBCreateSubscriptionRequest';
 		self::$_request = self::_build_request($params);	
@@ -576,7 +579,7 @@ class Authorize_Net
 	 * @param	array
 	 * @return	object
 	 */		
-	public static function authorize_net_get_recurring_profile($params)
+	public static function get_recurring_profile($params)
 	{	
 		self::$_api_method = 'ARBGetSubscriptionStatusRequest';
 		self::$_request = self::_build_request($params);	
@@ -594,7 +597,7 @@ class Authorize_Net
 		¥ The number of trial occurrences (subscription.paymentSchedule.trialOccurrences) may only be updated if the subscription has not yet begun or is still in the trial period.
 		¥ All other fields are optional.	 
 	 */		
-	public static function authorize_net_update_recurring_profile($params)
+	public static function update_recurring_profile($params)
 	{		
 		self::$_api_method = 'ARBUpdateSubscriptionRequest';
 		self::$_request = self::_build_request($params);		
@@ -607,7 +610,7 @@ class Authorize_Net
 	 * @param	array
 	 * @return	object
 	 */		
-	public static function authorize_net_cancel_recurring_profile($params)
+	public static function cancel_recurring_profile($params)
 	{	
 		self::$_api_method = 'ARBCancelSubscriptionRequest';
 		self::$_request = self::_build_request($params);
@@ -626,7 +629,7 @@ class Authorize_Net
 	{	
 		self::$_http_query = self::$_request;
 		
-		$response_object = self::$payments::gateway_request(self::$_api_endpoint, self::$_http_query);
+		$response_object = \Payments::gateway_request(self::$_api_endpoint, self::$_http_query);
 		$response = self::_parse_response($response_object);
 		
 		return $response;
@@ -642,7 +645,7 @@ class Authorize_Net
 	{	
 		$details = (object) array();
 
-		$as_array = self::$payments::arrayize_object($xml);
+		$as_array = \Payments::arrayize_object($xml);
 
 		$result = $as_array['messages']['resultCode'];
 		
@@ -667,9 +670,9 @@ class Authorize_Net
 		
 		if($result == 'Ok')
 		{
-			return self::$payments::return_response(
+			return \Payments::return_response(
 				'Success',
-				self::$payments::$payment_type.'_success',
+				\Payments::$payment_type.'_success',
 				'gateway_response',
 				$details
 			);
@@ -692,9 +695,9 @@ class Authorize_Net
 				$details->reason = $message;
 			}	
 
-			return self::$payments::return_response(
+			return \Payments::return_response(
 				'Failure',
-				self::$payments::$payment_type.'_gateway_failure',
+				\Payments::$payment_type.'_gateway_failure',
 				'gateway_response',
 				$details
 			);				

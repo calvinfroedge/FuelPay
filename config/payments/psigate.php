@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_cid'] = "1000001";
 $config['api_username'] = "teststore";

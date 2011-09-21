@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['recurring_bill_outstanding'] = array(
 			'identifier'	=> '', //Required.  Should have been returned when you created the profile.

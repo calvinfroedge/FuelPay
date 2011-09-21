@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['recurring_payment_button'] = array(
 	'amt'		=>	'',	//Amount for the payment

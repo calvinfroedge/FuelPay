@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_username'] = "iambrs_1298074268_biz_api1.gmail.com";
 $config['api_password'] = "1298074286";

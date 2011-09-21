@@ -10,12 +10,11 @@
  * @link       http://fuelphp.com
  */
 
-
-Autoloader::add_core_namespace('Payments');
+Autoloader::add_core_namespace('Payments', __DIR__.'/classes/payments.php');
 
 Autoloader::add_classes(array(
-	'Payments'           => __DIR__.'/classes/payments.php',
-	//'Payments\\Authorize_Net'	   => __DIR__.'/classes/payments/authorize_net.php',
+	'Payments\\Payments'           => __DIR__.'/classes/payments.php',
+	'Payments\\Authorize_Net'	   => __DIR__.'/classes/payments/authorize_net.php',
 ));
 
 

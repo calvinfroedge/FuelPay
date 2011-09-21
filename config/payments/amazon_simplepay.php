@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_signature_version'] = "2";
 $config['api_signature_method'] = "HmacSHA256";

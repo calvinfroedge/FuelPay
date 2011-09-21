@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 $config['recurring_payment'] = array(
 			'first_name'				=>	'', //Subscriber's name.
 			'last_name'					=>	'',

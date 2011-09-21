@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_application_login'] = "cfpayments.codeigniter.local";
 $config['api_connection_ticket'] = "TGT-172-3nhcl7svhgXazfMDkaC_QQ";

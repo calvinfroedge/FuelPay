@@ -1,6 +1,4 @@
 <?php
-
-
 /**
 * FuelPHP Payments
 *
@@ -13,6 +11,9 @@
 * @license http://www.opensource.org/licenses/mit-license.php
 * @link https://github.com/calvinfroedge/fuelphp-payments
 */
+
+namespace Payments;
+
 class Payments
 {
 	/**
@@ -62,7 +63,7 @@ class Payments
 	{
 		\Config::load('payments', true);
 		self::$mode = \Config::get('payments.payments_mode');
-		self::$_response_codes::\Config::get('payments.response_codes');
+		self::$_response_codes = \Config::get('payments.response_codes');
 		\Lang::load('response_messages');
 		\Lang::load('response_details');
 	}
@@ -74,7 +75,7 @@ class Payments
 	* @param array $params[0] is the gateway, $params[1] are the params for the request
 	* @return object Should return a success or failure, along with a response.
 	*/ 	
-	public function __callStatic($method, $params)
+	public static function __callStatic($method, $params)
 	{
 		$supported = self::_check_method_supported($method);
 		
@@ -152,12 +153,11 @@ class Payments
 	 * @return	object	Should return a success or failure, along with a response
 	 */		
 	private static function _do_method($payment_module)
-	{				
-		$object = new $payment_module($this);
+	{	
+		$method = self::$payment_type;
+		$module = '\\'.$payment_module;
 		
-		$method = $payment_module.'_'.self::$payment_type;
-		
-		if(!method_exists($payment_module, $method))
+		if(!method_exists($module, $method))
 		{
 			return self::return_response(
 				'failure', 
@@ -167,9 +167,9 @@ class Payments
 		}
 		else
 		{
-			\Config::load('payments/'.self::$payment_type);
-			self::_default_params = \Config::get('payments.'.self::$payment_type);
-			return $object::$method(
+			\Config::load('payment_types/'.self::$payment_type, 'payment_types');
+			self::$_default_params = \Config::get('payment_types.'.self::$payment_type);
+			return $module::$method(
 				array_merge(
 					self::$_default_params, 
 					self::$_params
@@ -558,8 +558,10 @@ class Payments
 	 * @param	mixed	can be an object, string or null.  Depends on whether local or gateway.
 	 * @return	object	response object
 	*/	
-	public static function gateway_request($query_string, $xml = NULL, $content_type = NULL)
+	public static function gateway_request($query_string, $payload = NULL, $content_type = NULL)
 	{
+		var_dump($query_string);exit;
+		$curl = new \Rest_Curl();
 		/*
 		if(is_null($xml))
 		{
@@ -606,7 +608,7 @@ class Payments
 	 * @param	mixed	can be an object, string or null.  Depends on whether local or gateway.
 	 * @return	object	response object
 	*/	
-	public function return_response($status, $response, $response_type, $response_details = null)
+	public static function return_response($status, $response, $response_type, $response_details = null)
 	{
 		$status = strtolower($status);
 		
@@ -614,7 +616,7 @@ class Payments
 		? $message_type = 'info'
 		: $message_type = 'error';
 		
-		Log::$message_type(self::_response_messages[$response]);
+		\Log::$message_type(self::$_response_messages[$response]);
 		
 		if($response_type == 'local_response')
 		{
@@ -645,7 +647,7 @@ class Payments
 		? $message_type = 'info'
 		: $message_type = 'error';
 			
-		Log::$message_type(\Lang::line('response_message_'.$response));
+		\Log::$message_type(\Lang::line('response_message_'.$response));
 		
 		if(is_null($response_details))
 		{
@@ -653,7 +655,7 @@ class Payments
 			(
 				'type'				=>	'local_response',
 				'status' 			=>	$status, 
-				'response_code' 	=>	self::_response_codes[$response], 
+				'response_code' 	=>	self::$_response_codes[$response], 
 				'response_message' 	=>	\Lang::line('response_message_'.$response)
 			);			
 		}
@@ -663,7 +665,7 @@ class Payments
 			(
 				'type'				=>	'local_response',
 				'status' 			=>	$status, 
-				'response_code' 	=>	self::_response_codes[$response], 
+				'response_code' 	=>	self::$_response_codes[$response], 
 				'response_message' 	=>	\Lang::line('response_message_'.$response),
 				'details'			=>	$response_details
 			);				
@@ -684,7 +686,7 @@ class Payments
 		(
 			'type'				=>	'gateway_response',
 			'status' 			=>	$status, 
-			'response_code' 	=>	self::_response_codes[$response], 
+			'response_code' 	=>	self::$_response_codes[$response], 
 			'response_message' 	=>	\Lang::line('response_message_'.$response),
 			'details'			=>	$details
 		);		
@@ -717,7 +719,7 @@ class Payments
 		// Redirect if NOT secure and forcing a secure connection.
 		if(($_SERVER['SERVER_PORT'] === '443' && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') === FALSE)
 		{
-			Log::debug('Forcing Secure Connection for Payment Gateway');
+			\Log::debug('Forcing Secure Connection for Payment Gateway');
 			$loc = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 			Response::redirect($loc);
 			exit;

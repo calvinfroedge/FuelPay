@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['update_recurring_profile']	= array(
 			'identifier'				=>	'',	//Required.

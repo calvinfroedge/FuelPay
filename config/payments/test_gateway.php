@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 //Set to either gateway or local
 $config['return_mode'] = "local";

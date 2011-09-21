@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $config['api_username'] = "58Lct5BSN";
 $config['api_password'] = "6Wvtm62f543DSXpx";
