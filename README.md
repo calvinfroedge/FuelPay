@@ -19,7 +19,6 @@ To use as a single instance:
 
 ```php
 $p = Payment::oneoff_payment('authorize_net', array('cc_number' => 4444444444444444, 'cc_code' => 432, 'amount' => 30.00));
-
 //You'll get a generic response indicating success or failure, along with a message, error code and the raw response from the gateway
 var_dump($p);
 ```
@@ -28,7 +27,6 @@ To create multiple instances:
 ```php
 $i = Payment::instance('key');
 $p = $i->oneoff_payment('authorize_net', array('cc_number' => 444444444444, 'cc_code' => 432, 'amount' => 30.00));
-
 var_dump($p);
 ```
 Full documentation of methods, examples, and other such shits are available in the src/php-payments directory.
