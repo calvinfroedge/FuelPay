@@ -6,6 +6,14 @@ This package makes use of PHP-Payments, a generic payments interface supporting 
 
 Place in your packages directory.
 
+CD into fuelpay package and run:
+
+```php
+git submodule update --init
+```
+
+This will grab the latest PHP-Payments code.
+
 ##Using
 
 To load:
