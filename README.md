@@ -25,7 +25,7 @@ var_dump($p);
 ```
 
 To create multiple instances:
-```
+```php
 $i = Payment::instance('key');
 $p = $i->oneoff_payment('authorize_net', array('cc_number' => 444444444444, 'cc_code' => 432, 'amount' => 30.00));
 
