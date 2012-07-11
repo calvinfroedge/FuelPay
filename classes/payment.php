@@ -1,6 +1,6 @@
 <?php
 
-namespace Payment;
+namespace FuelPay;
 
 abstract class Payment
 {
